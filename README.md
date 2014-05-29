@@ -1,4 +1,7 @@
-DerivativePricingPython
+DerivativePricinginPython
 =======================
 
-1. Pricing Plain Vanilla Options using Monte Carlo Simulations
+1. Monte Carlo Simulation:
+   a. Plain Vanilla Options - VanillaOptions.py
+   b. Double Digital Options - DoubleDigitalOptions.py
+
