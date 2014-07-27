@@ -1,6 +1,7 @@
 import random 
 import math
 from numpy import zeros
+from scipy.stats import norm
 
 class VanillaOption:
     def __init__(self, option_type, expiry, strike, spot, volatility, interest_rate, number_of_paths):
@@ -134,6 +135,17 @@ class VanillaOption:
         return option[0] 
 
 
+    def black_scholes(self):
+        d_1 = math.log(self.spot / self.strike) + ((self.interest_rate + (self.volatility * self.volatility)/2) *
+                self.expiry)
+        d_2 = d_1 - self.volatility * math.sqrt(self.expiry)
+        if self.option_type.lower() == 'call':
+            result = self.spot * norm.cdf(d_1) - self.strike * math.exp(-self.interest_rate * self.expiry) * norm.cdf(d_2)
+            return result
+        elif self.option_type.lower() == 'put':
+            result = self.strike * math.exp(-self.interest_rate * expiry) * norm.cdf(-d_2) - self.spot * norm.cdf(-d_1)
+            return result
+            
 def main():
     option_type = str(raw_input("Enter 'call' for call options or 'put' for put options: "))
     expiry = float(raw_input("Enter the expiry of the option: "))
@@ -144,10 +156,12 @@ def main():
     number_of_paths = int(raw_input("Enter the number of paths you want to run the simulation for: "))
     call = VanillaOption(option_type, expiry, strike, spot, volatility, interest_rate, number_of_paths) 
     print "Monte Carlo Result: ", call.monte_carlo_pricer()
-    print "SS Binomial Model without dividends: ", call.ss_binomial_model_no_dividends( 2 )
+    up_factor = float(raw_input("Enter the up factor: " ))
+    print "SS Binomial Model without dividends: ", call.ss_binomial_model_no_dividends(up_factor)
     print "Reg Binomial Model without dividends: ", call.reg_binomial_model_no_dividends()
     dividends = float(raw_input("Enter the dividend value: "))
     print "Reg Binomial Model with dividends: ", call.reg_binomial_model_with_dividends(dividends)
-
+    print "Black Scholes Model: ", call.black_scholes()
+        
 if __name__ == '__main__':
     main()
