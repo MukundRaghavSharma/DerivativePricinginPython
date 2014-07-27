@@ -33,8 +33,7 @@ class VanillaOption:
         time_step = self.expiry / self.number_of_paths
         up_factor = math.exp(self.volatility * math.sqrt(self.expiry))
         down_factor = 1 / up_factor
-        p = ((math.exp(self.interest_rate * self.expiry)/(self.number_of_paths)) - down_factor ) / ( up_factor -
-                down_factor)
+        p = (math.exp(self.interest_rate * time_step) - down_factor) / (up_factor - down_factor)
         q = 1 - p
         discount_factor = math.exp(-self.interest_rate * time_step)
         underlying = zeros(self.number_of_paths + 1)
@@ -94,7 +93,7 @@ class VanillaOption:
         # Discounted Risk Neutral Measure
         for i in xrange(0, self.number_of_paths):
             for j in xrange(0, self.number_of_paths):
-                option[j] = ((p * option[j+1]) + ( q * option[j])) * discount_factor
+                option[j] = ((p * option[j+1]) + (q * option[j])) * discount_factor
         
         return option[0] 
 
@@ -111,8 +110,6 @@ def main():
     print "Monte Carlo Result: ", call.monte_carlo_pricer()
     print "SS Binomial Model without dividends: ", call.ss_binomial_model_no_dividends( 2 )
     print "Reg Binomial Model without dividends: ", call.reg_binomial_model_no_dividends()
-
-
 
 if __name__ == '__main__':
     main()
