@@ -39,4 +39,5 @@ def main():
     call = VanillaOption(option_type, expiry, strike, spot, volatility, interest_rate, number_of_paths) 
     print "Result: ", call.monte_carlo_pricer()
 
-if __name__ == '__main__':main()
+if __name__ == '__main__':
+    main()
