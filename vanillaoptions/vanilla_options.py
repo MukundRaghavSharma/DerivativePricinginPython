@@ -64,6 +64,42 @@ class VanillaOption:
         return option[0] 
 
 
+    def reg_binomial_model_with_dividends(self, dividends):
+        time_step = self.expiry / self.number_of_paths
+        up_factor = math.exp(self.volatility * math.sqrt(self.expiry))
+        down_factor = 1 / up_factor
+        p = (math.exp((self.interest_rate - dividends) * time_step) - down_factor) / (up_factor - down_factor)
+        q = 1 - p
+        discount_factor = math.exp(-self.interest_rate * time_step)
+        underlying = zeros(self.number_of_paths + 1)
+        option = zeros(self.number_of_paths + 1)
+
+        underlying[0] = self.spot
+
+        # Underlying Calculation #
+        for i in xrange(1, self.number_of_paths + 1):
+            for j in xrange(i, 0, -1): 
+                underlying[j] = up_factor * underlying[j-1]
+            underlying[0] = down_factor * underlying[0]
+        
+        # Option Calculation #
+        # Underlying to Option for each time step
+        if self.option_type.lower() == 'call':
+            for i in xrange(0, self.number_of_paths + 1):
+                option[i] = max(underlying[i] - self.strike, 0.0)
+        elif self.option_type.lower() == 'put':
+            for i in xrange(0, self.number_of_paths + 1):
+                option[i] = max(self.strike - underlying[i], 0.0)
+        
+        # Discounted Risk Neutral Measure
+        for i in xrange(0, self.number_of_paths):
+            for j in xrange(0, self.number_of_paths):
+                option[j] = ((p * option[j+1]) + ( q * option[j])) * discount_factor
+       
+        if option[0] <= 0.0:
+            return 0
+        return option[0] 
+
     def ss_binomial_model_no_dividends(self, up_factor):
         time_step = self.expiry / self.number_of_paths
         down_factor = 1 / up_factor
@@ -110,6 +146,8 @@ def main():
     print "Monte Carlo Result: ", call.monte_carlo_pricer()
     print "SS Binomial Model without dividends: ", call.ss_binomial_model_no_dividends( 2 )
     print "Reg Binomial Model without dividends: ", call.reg_binomial_model_no_dividends()
+    dividends = float(raw_input("Enter the dividend value: "))
+    print "Reg Binomial Model with dividends: ", call.reg_binomial_model_with_dividends(dividends)
 
 if __name__ == '__main__':
     main()
