@@ -1,0 +1,16 @@
+########################
+        TODO
+########################
+
+1. Barrier Options 
+2. Binomial Model Pricing with Fixed Steps
+    1. With Dividends
+    2. Without Dividends
+3. Implied Volatility Calculations
+4. Black Scholes Model
+    1. Model
+    2. Greeks
+5. Finite Differences Method
+6. Market Data from Yahoo Finance on Top US Equities
+7. Creating a volatility smile 
+8. IV Surface
